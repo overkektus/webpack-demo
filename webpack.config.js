@@ -1,44 +1,12 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-
-const baseConfig = {
-    entry: {
-        build: path.join(__dirname, 'src')
-    },
-    output: {
-        path: path.join(__dirname, 'build'),
-        filename: '[name].js'
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            title: 'Webpack demo'
-        })
-    ]
-}
-
-const productionConfig = () => baseConfig
-
-const developmentConfig = () => {
-    const config = {
-        devServer: {
-            historyApiFallback: true,
-            stats: 'errors-only',
-            host: process.env.HOST,
-            port: process.env.PORT,
-            watchOptions: {
-                aggregateTimeout: 1000,
-                poll: 1000
-            }
-        }
-    }
-
-    return Object.assign({}, baseConfig, config)
-}
+const merge = require('webpack-merge')
+const baseConfig = require('./build/webpack.base.config')
+const devConfig = require('./build/webpack.dev.config')
+const prodConfig = require('./build/webpack.prod.config')
 
 module.exports = (env) => {
     if (env === 'production') {
-        return productionConfig()
+        return merge(baseConfig, prodConfig)
     }
 
-    return developmentConfig()
+    return merge(baseConfig, devConfig)
 }
