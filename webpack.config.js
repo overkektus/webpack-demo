@@ -1,9 +1,9 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-module.exports = {
+const baseConfig = {
     entry: {
-        app: path.join(__dirname, 'src')
+        build: path.join(__dirname, 'src')
     },
     output: {
         path: path.join(__dirname, 'build'),
@@ -14,4 +14,31 @@ module.exports = {
             title: 'Webpack demo'
         })
     ]
+}
+
+const productionConfig = () => baseConfig
+
+const developmentConfig = () => {
+    const config = {
+        devServer: {
+            historyApiFallback: true,
+            stats: 'errors-only',
+            host: process.env.HOST,
+            port: process.env.PORT,
+            watchOptions: {
+                aggregateTimeout: 1000,
+                poll: 1000
+            }
+        }
+    }
+
+    return Object.assign({}, baseConfig, config)
+}
+
+module.exports = (env) => {
+    if (env === 'production') {
+        return productionConfig()
+    }
+
+    return developmentConfig()
 }
